@@ -1,0 +1,238 @@
+{% extends 'base.html'%}
+{% load static %} 
+{% block content %}
+{% block navbar %}
+           <div class="container px-0">
+                <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                    <a href="/" class="navbar-brand"><h1 class="text-primary display-6">Fruitables</h1></a>
+                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars text-primary"></span>
+                    </button>
+                    <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                        <div class="navbar-nav mx-auto">
+                            <a href="/" class="nav-item nav-link ">Home</a>
+                            <a href="{% url 'shop-page'%}" class="nav-item nav-link active">Shop</a>
+                            
+                            <a href="{% url 'contact-page'%}" class="nav-item nav-link">Contact</a>
+                        </div>
+                        <div class="d-flex m-3 me-0">
+                            <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
+                            <a href="#" class="position-relative me-4 my-auto">
+                                <i class="fa fa-shopping-bag fa-2x"></i>
+                                <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
+                            </a>
+                            <a href="#" class="my-auto">
+                                <i class="fas fa-user fa-2x"></i>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Navbar End -->
+        {% endblock navbar %}
+
+
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="input-group w-75 mx-auto d-flex">
+                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Search End -->
+
+
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Shop</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                <li class="breadcrumb-item active text-white">Shop</li>
+            </ol>
+        </div>
+        <!-- Single Page Header End -->
+
+
+        <!-- Fruits Shop Start-->
+        <div class="container-fluid fruite py-5">
+            <div class="container py-5">
+                <h1 class="mb-4">Fresh fruits shop</h1>
+                <div class="row g-4">
+                    <div class="col-lg-12">
+                        <div class="row g-4">
+                            <div class="col-xl-3">
+                                <div class="input-group w-100 mx-auto d-flex">
+                                    
+                                <form method='GET' action="">
+                                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1" name="q" value='{{ request.GET.q }}'>
+                                    <button style="border: 0;"><span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span></button>
+                                </form>
+                                
+                                </div>
+                            </div>
+                            <div class="col-6"></div>
+                            <div class="col-xl-3">
+                                <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+                                    <label for="fruits">Default Sorting:</label>
+                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
+                                        <option value="volvo">Nothing</option>
+                                        <option value="saab">Popularity</option>
+                                        <option value="opel">Organic</option>
+                                        <option value="audi">Fantastic</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-lg-3">
+                                <div class="row g-4">
+                                    <form id="filter-form" method="GET">
+                                    <div class="col-lg-12">
+                                        <div class="mb-3">
+                                            <h4>Categories</h4>
+                                            {% for category in categories %}
+                                                <li class="nav-item">
+                                                    <a class="d-flex m-2 py-2 bg-light rounded-pill" data-bs-toggle="pill" href="#tab-{{category.id}}">
+                                                        <span class="text-dark" style="width: 130px;">{{category.title}}</span>
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+
+                                            {% if products %}
+                                            {% for product in products %}
+                                            <ul class="list-unstyled fruite-categorie">
+                                                <li>
+                                                    <div class="d-flex justify-content-between fruite-name">
+                                                        <a href="{% url 'detail-page' product.slug %}"><i class="fas fa-apple-alt me-2"></i>Fruits</a>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="d-flex justify-content-between fruite-name">
+                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Vegetables</a>
+                                                   </div>
+                                                </li> 
+                                            </ul>
+                                            {% endfor %}
+                                        
+                                            {% else %}
+                                            <br>Bunday mahsulot yo'q
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 fixed-left-sidebar">
+                                        
+                                            <div class="mb-3">
+                                                <h4 class="mb-2">Price</h4>
+                                                <input type="range" class="form-range w-100" id="price" name="price" min="0" max="500" value="{{ request.GET.price }}">
+                                                <output id="amount" name="amount" min-value="0" max-value="500" for="price">{{ request.GET.price }}</output>
+                                            </div>
+                                        
+                                    </div>
+                                    
+                                    <div class="col-lg-12">
+                                        <div class="mb-3">
+                                            <h4>Additional</h4>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-1" name="quality" value="Organic">
+                                                <label for="quality"> Organic</label>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-2" name="quality" value="Fresh">
+                                                <label for="Categories-2"> Fresh</label>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-3" name="quality" value="Sales">
+                                                <label for="Categories-3"> Sales</label>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-4" name="quality" value="Discount">
+                                                <label for="Categories-4"> Discount</label>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-5" name="quality" value="Expired">
+                                                <label for="Categories-5"> Expired</label>
+                                            </div>
+                                        </div>
+                                        <br><button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                </form>
+                                    
+                                  
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="row g-4 justify-content-center">
+                                    {% for product in Products %}
+                                    <div class="col-md-6 col-lg-6 col-xl-4">
+                                        <div class="rounded position-relative fruite-item">
+                                            <div class="fruite-img">
+                                                <img src="{{ product.image.url }}" class="img-fluid w-100 rounded-top" alt="">
+                                            </div>
+                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{product.category}}</div>
+                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                                <h4>{{product.title}}</h4>
+                                                <p>{{product.description | truncatewords:8}}</p>
+                                                <div class="d-flex justify-content-between flex-lg-wrap">
+                                                    <p class="text-dark fs-5 fw-bold mb-0">${{product.price}} / kg</p>
+                                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                
+                                    
+                                    <div class="pagination d-flex justify-content-center mt-5">
+                                        <span class="step-links">
+                                            
+                                                <!-- <a href="?page=1" class="rounded">&laquo; first</a> -->
+                                                
+                                            
+                                            
+                                            <span class="pages">
+                                                {% if page_obj.paginator.num_pages > 1 %}
+                                                {% if page_obj.has_previous %}
+                                                <a href="?page={{ page_obj.previous_page_number }}" class="rounded">«</a>
+                                                {% endif %}
+                                                    {% for i in page_obj.paginator.page_range %}
+                                                        {% if i == page_obj.number %}
+                                                            <a href="?page={{ i }}" class="active rounded">{{ i }}</a>
+                                                        {% else %}
+                                                            <a href="?page={{ i }}" class="rounded">{{ i }}</a>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if page_obj.has_next %}
+                                                <a href="?page={{ page_obj.next_page_number }}" class="rounded">»</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </span>
+                                                                                    
+                                        </span>
+                                        
+                                        
+                                    </div>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fruits Shop End-->
+
+
+      {% endblock content%}
