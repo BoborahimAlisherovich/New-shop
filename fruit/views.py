@@ -35,6 +35,7 @@ class ShopDetailView(DetailView):
         context["comments"] = Comment.objects.filter(product=self.object).order_by("-created_date")
         context["form"] = self.form_class()
         context["reyting"] = [1,2,3,4,5]
+        context['categories'] = Category.objects.all()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -58,26 +59,51 @@ class ShopDetailView(DetailView):
         else:
             print(form.errors)  # Xatolikni chop etish
         return self.render_to_response(self.get_context_data(form=form))
+    
 
+from django.db.models import Case, When
+from django.views.generic import ListView
+from django.db.models import Case, When, Value, CharField
 
 class ShopView(ListView):
     model = Product
-    paginate_by = 2
+    paginate_by = 3
     template_name = "shop.html"
-    context_object_name ="Products"
-    context = {}
-    context["categories"] = Category.objects.all()
+    context_object_name = "Products"
     
-    def get_queryset(self):
-            queryset = super().get_queryset()
-            min_price = self.request.GET.get('price')
-            name = self.request.GET.get('q')
-            if min_price:
-                queryset = queryset.filter(price__lte=min_price)
-            if name:
-                queryset = queryset.filter(title__icontains=name)
-            return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        context["checked"] = self.request.GET.getlist('checked')  # checked ko'rsatkichlarni olish
+        return context
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        min_price = self.request.GET.get('price')
+        name = self.request.GET.get('q')
+        quality = self.request.GET.get('quality')
+        
+        checked = self.request.GET.getlist('checked')  # checked ni olish
+        if checked:  # agar checked belgilangan bo'lsa
+            queryset = queryset.filter(title__in=checked)  # checked lar asosida queryset ni filtr qilish
+        
+        if min_price:
+            queryset = queryset.filter(price__lte=min_price)
+        if name:
+            queryset = queryset.filter(title__icontains=name)
+        
+        if quality:
+            queryset = queryset.annotate(
+                custom_order=Case(
+                    When(quality=quality, then=Value(1)),
+                    default=Value(0),
+                    output_field=CharField(),
+                )
+            ).order_by('-custom_order')
+            
+        return queryset
+
+    
 
 class ContactView(View):
     template_name = "contact.html"
@@ -94,7 +120,11 @@ class ContactView(View):
         
         send_message(f"Ism: {name}\nEmail: {email}\nText:{message}")
 
-        return HttpResponseRedirect(reverse('home-page'))   
+        return HttpResponseRedirect(reverse('home-page'))  
+
+def page_turt_view(request,path):
+    return render(request, "page-404.html")
+ 
 
 # class ContactView(CreateView):
 #     model = Contact

@@ -14,7 +14,7 @@ class OrderStatusTextChoices(models.TextChoices):
 class Category(models.Model):
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to="Category/")
-    product_count = models.IntegerField(default=0)  # Siz kerakli ma'lumot turi bilan uzgartirishingiz kerak
+    product_count = models.IntegerField(default=0) 
 
 
     def __str__(self):
