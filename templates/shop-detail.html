@@ -305,7 +305,7 @@
                                         <li>
                                             {% for catigory in categories %}
                                             <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>{{catigory}}</a>
+                                                <a href="{% url 'home-page' %}"><i class="fas fa-apple-alt me-2"></i>{{catigory}}</a>
                                                 <span>{{catigory.product_count}}</span>
                                             </div>
                                             {% endfor %}

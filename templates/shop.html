@@ -10,10 +10,10 @@
                     </button>
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <a href="/" class="nav-item nav-link ">Home</a>
-                            <a href="{% url 'shop-page'%}" class="nav-item nav-link active">Shop</a>
+                            <a href="/" class="nav-item nav-link ">ASOSIY</a>
+                            <a href="{% url 'shop-page'%}" class="nav-item nav-link active">DO'KON</a>
                             
-                            <a href="{% url 'contact-page'%}" class="nav-item nav-link">Contact</a>
+                            <a href="{% url 'contact-page'%}" class="nav-item nav-link">ALOQA</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -87,9 +87,9 @@
                                 
                                 <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
                                    
-                                    <label for="fruits">Default Sorting:</label>
+                                    <label for="fruits">Saralash:</label>
                                 
-                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
+                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform" href="#tab-{{ product.checked.id }}">>
                                         {% for product in Products %}
                                         <option value="{{ product.pk }}" {% if product.checked %}selected{% endif %}>{{product.checked}}</option>
                                     {% endfor %}

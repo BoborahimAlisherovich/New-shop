@@ -104,7 +104,6 @@ class ShopView(ListView):
         return queryset
 
     
-
 class ContactView(View):
     template_name = "contact.html"
     
@@ -125,25 +124,3 @@ class ContactView(View):
 def page_turt_view(request,path):
     return render(request, "page-404.html")
  
-
-# class ContactView(CreateView):
-#     model = Contact
-#     form_class = ContactForm
-#     template_name = "contact.html"
-#     success_url ='/'
-
-
-# def contact_view(request):
-#     if request.method == 'POST':
-#         name = request.POST.get('first_name', '')
-#         email = request.POST.get('email', '')
-#         message = request.POST.get('description', '')
-#         contact = Contact(first_name=name,email=email,description=message)
-#         contact.save()
-        
-#         send_message(f"Ism: {name}\nEmail: {email}\nText:{message}")
-
-#         return render(request, 'contact.html')
-        
-#     else:
-#         return render(request, "contact.html")

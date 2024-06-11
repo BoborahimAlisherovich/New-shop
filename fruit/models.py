@@ -29,10 +29,11 @@ class Product(models.Model):
     weight = models.FloatField()
     country_of_origin = models.CharField(max_length=200)
     quality = models.CharField(max_length=50,choices=OrderStatusTextChoices.choices)
-    checked = models.CharField(max_length=200)
+   
     min_weight = models.FloatField()
     image = models.ImageField(upload_to="Products/")
     category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name="Products")
+    checked = models.BooleanField(default=False)
 
     def get_absolute_url(self): #new
         return reverse('detail-page', kwargs={'slug': self.slug})
