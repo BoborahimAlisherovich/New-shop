@@ -74,34 +74,39 @@ class ShopView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["categories"] = Category.objects.all()
-        context["checked"] = self.request.GET.getlist('checked')  # checked ko'rsatkichlarni olish
+        context["checked"] = Category.objects.all().order_by('title')  # checked ko'rsatkichlarni olish
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        min_price = self.request.GET.get('price')
-        name = self.request.GET.get('q')
-        quality = self.request.GET.get('quality')
+            queryset = super().get_queryset()
+            min_price = self.request.GET.get('price')
+            name = self.request.GET.get('q')
+            quality = self.request.GET.get('quality')
+            if min_price:
+                queryset = queryset.filter(price__lte=min_price)
+            if name:
+                queryset = queryset.filter(title__icontains=name)
+            if quality:
+                queryset = queryset.filter(quality__icontains=quality)
+            return queryset
+
+
+    def my_view(request):
+        Products = [
+            {'id': 1, 'checked': 'Quality A', 'name': 'Product A'},
+            {'id': 2, 'checked': 'Quality B', 'name': 'Product B'},
+            {'id': 3, 'checked': 'Quality C', 'name': 'Product C'},
+            # Add more products as needed
+        ]
         
-        checked = self.request.GET.getlist('checked')  # checked ni olish
-        if checked:  # agar checked belgilangan bo'lsa
-            queryset = queryset.filter(title__in=checked)  # checked lar asosida queryset ni filtr qilish
+        # Duplicate each product in the list with a different 'checked' value
+        duplicated_products = []
+        for product in Products:
+            duplicated_products.append(product)
+            duplicated_products.append({'id': product['id'], 'checked': 'Second ' + product['checked'], 'name': product['name']})
         
-        if min_price:
-            queryset = queryset.filter(price__lte=min_price)
-        if name:
-            queryset = queryset.filter(title__icontains=name)
-        
-        if quality:
-            queryset = queryset.annotate(
-                custom_order=Case(
-                    When(quality=quality, then=Value(1)),
-                    default=Value(0),
-                    output_field=CharField(),
-                )
-            ).order_by('-custom_order')
-            
-        return queryset
+        return render(request, 'your_template.html', {'Products': duplicated_products})
+
 
     
 class ContactView(View):

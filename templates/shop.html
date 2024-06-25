@@ -10,10 +10,10 @@
                     </button>
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <a href="/" class="nav-item nav-link ">ASOSIY</a>
-                            <a href="{% url 'shop-page'%}" class="nav-item nav-link active">DO'KON</a>
+                            <a href="/" class="nav-item nav-link ">Home</a>
+                            <a href="{% url 'shop-page'%}" class="nav-item nav-link active">Shop</a>
                             
-                            <a href="{% url 'contact-page'%}" class="nav-item nav-link">ALOQA</a>
+                            <a href="{% url 'contact-page'%}" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -84,20 +84,15 @@
                             </div>
                             <div class="col-6"></div>
                             <div class="col-xl-3">
-                                
                                 <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                   
-                                    <label for="fruits">Saralash:</label>
-                                
-                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform" href="#tab-{{ product.checked.id }}">>
-                                        {% for product in Products %}
-                                        <option value="{{ product.pk }}" {% if product.checked %}selected{% endif %}>{{product.checked}}</option>
-                                    {% endfor %}
-                                    
+                                    <label for="fruits">Default Sorting:</label>
+                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
+                                        <option value="volvo">Nothing</option>
+                                        <option value="saab">Popularity</option>
+                                        <option value="opel">Organic</option>
+                                        <option value="audi">Fantastic</option>
                                     </select>
-                                    
                                 </div>
-                               
                             </div>
                         </div>
                         <div class="row g-4">
@@ -110,23 +105,74 @@
                                             
                                             {% for category in categories %}
                                             <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>{{ category }}</a>
+
+                                                <a href="#"><i class="fas fa-apple-alt me-2" ></i>{{ category }}  </a>
                                                 <span>{{category.product_count}}</span>
                                             </div>
                                             {% endfor %}                                       
-                                          
+<!--                                           
+                                            {% for category in categories %}
+                                            <li class="nav-item">
+                                                <a class="d-flex m-2 py-2 bg-light rounded-pill" data-bs-toggle="pill" href="#tab-{{category.id}}">
+                                                    <span class="text-dark" style="width: 130px;">{{category.title}}</span>
+                                                </a>
+                                            </li>
+                                            {% endfor %} -->
+
+                                            {% if products %}
+                                            {% for product in products %}
+                                            <ul class="list-unstyled fruite-categorie">
+                                                <li>
+                                                    <div class="d-flex justify-content-between fruite-name">
+                                                        <a href="{% url 'detail-page' product.slug %}"><i class="fas fa-apple-alt me-2"></i>Fruits</a>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="d-flex justify-content-between fruite-name">
+                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Vegetables</a>
+                                                   </div>
+                                                </li> 
+                                            </ul>
+                                            {% endfor %}
+                                        
+                                            {% else %}
+                                            <br>
+                                            {% endif %}
                                         </div>
-                                     </div>                                        
+                                    </div>
+                                    <div class="col-lg-12 fixed-left-sidebar">
+                                        
+                                            <div class="mb-3">
+                                                <h4 class="mb-2">Price</h4>
+                                                <input type="range" class="form-range w-100" id="price" name="price" min="0" max="500" value="{{ request.GET.price }}">
+                                                <output id="amount" name="amount" min-value="0" max-value="500" for="price">{{ request.GET.price }}</output>
+                                            </div>
+                                        
+                                    </div>
+                                    
                                     <div class="col-lg-12">
                                         <div class="mb-3">
                                             <h4>Additional</h4>
-                                            {% for product in Products %}
                                             <div class="mb-2">
-                                                
                                                 <input type="radio" class="me-2" id="Categories-1" name="quality" value="Organic">
-                                                <label for="quality">{{product.quality}}</label>
+                                                <label for="quality"> Organic</label>
                                             </div>
-                                            {% endfor %}
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-2" name="quality" value="Fresh">
+                                                <label for="Categories-2"> Fresh</label>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-3" name="quality" value="Sales">
+                                                <label for="Categories-3"> Sales</label>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-4" name="quality" value="Discount">
+                                                <label for="Categories-4"> Discount</label>
+                                            </div>
+                                            <div class="mb-2">
+                                                <input type="radio" class="me-2" id="Categories-5" name="quality" value="Expired">
+                                                <label for="Categories-5"> Expired</label>
+                                            </div>
                                         </div>
                                         <br><button type="submit" class="btn btn-primary">Filter</button>
                                     </div>
