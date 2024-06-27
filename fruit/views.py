@@ -1,11 +1,14 @@
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render,redirect
 from django.urls import reverse
-
-from .forms import ContactForm,CommentForm
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
+from .forms import CommentForm
 from .bot import send_message
-from .models import Contact,Product,Category,Comment
+from .models import Contact,Product,Category,Comment,Cart,CartItem
 from django.views.generic import View,TemplateView,DetailView,ListView
+from .forms import LoginForm, UserRegistrationForm
 
 
 class HomeView(TemplateView):
@@ -129,3 +132,91 @@ class ContactView(View):
 def page_turt_view(request,path):
     return render(request, "page-404.html")
  
+
+
+
+from .forms import LoginForm, UserRegistrationForm
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            return render(request, 'register_done.html', {'new_user': new_user})
+    else:
+        user_form = UserRegistrationForm()
+    return render(request, 'register.html', {'user_form': user_form})
+
+
+
+
+
+def cart(request):
+    try:
+        cart= Cart.objects.get(session_id=_cart_id(request))
+        cart_items = CartItem.objects.filter(cart=cart)
+        total = 0
+        for cart_item in cart_items:
+            total += cart_item.quantity*cart_item.product.price
+        shipping = 10
+        context = {
+        'cart_items': cart_items,
+        'shipping': shipping,
+        'get_total': total+shipping
+    }
+    
+    except ObjectDoesNotExist:
+        context={}
+    
+    return render(request, 'cart.html', context)
+    
+def _cart_id(request):
+    cart = request.session.session_key
+    if not cart:
+        cart = request.session.create()
+    return cart
+
+def add_cart(request, product_id):        
+    product = Product.objects.get(id=product_id)
+    
+    try:
+        cart = Cart.objects.get(session_id=_cart_id(request))      
+    except Cart.DoesNotExist:
+        cart = Cart.objects.create(session_id=_cart_id(request))
+    cart.save()
+    
+    try:
+        cart_item = CartItem.objects.get(product=product, cart=cart)
+        cart_item.quantity += 1
+        cart_item.save()
+    except CartItem.DoesNotExist:
+        cart_item = CartItem.objects.create(
+            product = product,
+            cart = cart,
+            quantity = 1
+        )
+        cart_item.save()
+    return redirect('cart')
+
+def sub_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart = Cart.objects.get(session_id=_cart_id(request))
+    cart_item = CartItem.objects.get(product=product, cart=cart)
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+    else:
+        cart_item.delete()
+    return redirect('cart')
+
+def remove_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart = Cart.objects.get(session_id=_cart_id(request))
+    cart_item = CartItem.objects.get(product=product, cart=cart)
+    cart_item.delete()
+    return redirect('cart')

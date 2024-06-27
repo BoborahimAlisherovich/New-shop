@@ -60,22 +60,22 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.full_name
-
+    
+    
 
 class Cart(models.Model):
-    cart_id = models.CharField(max_length=50,primary_key=True)
-    total = models.DecimalField(max_digits=9,decimal_places=2)  
-    quantity = models.IntegerField()  
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now=True)
+    session_id = models.CharField(max_length=200, default='')
 
-    def __str__(self):
-        return self.cart_id
-
+   
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    product_quantity = models.IntegerField(default=0)
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    is_active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return f'{self.user} {self.product} {self.product_quantity}'
+    def __str__(self) -> str:
+        return self.product.title
+
+    def get_total(self):
+        return self.quantity * self.product.price
